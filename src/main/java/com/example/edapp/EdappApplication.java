@@ -36,7 +36,6 @@ public class EdappApplication implements CommandLineRunner {
 
         log.info("Doctors initialized: " + doctor1.getName() + ", " + doctor2.getName() + ", " + generalDoctor.getName());
 
-        // Initialize queues
         queueService.initializeQueueForDoctor(doctor1.getId());
         queueService.initializeQueueForDoctor(doctor2.getId());
         queueService.initializeQueueForDoctor(generalDoctor.getId());

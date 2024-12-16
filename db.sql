@@ -18,7 +18,8 @@ CREATE TABLE vital_signs (
                              blood_pressure VARCHAR(50),
                              heart_rate INT,
                              oxygen_saturation INT,
-                             FOREIGN KEY (patient_id) REFERENCES patients(id)
+                             FOREIGN KEY (patient_id) REFERENCES patients(id),
+			     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE schedules (
                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -27,7 +28,6 @@ CREATE TABLE schedules (
                            shift_start TIMESTAMP,
                            shift_end TIMESTAMP
 );
-ALTER TABLE vital_signs ADD COLUMN recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 CREATE TABLE prescriptions (
                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                patient_id BIGINT NOT NULL,

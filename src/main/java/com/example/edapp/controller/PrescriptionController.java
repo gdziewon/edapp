@@ -16,9 +16,10 @@ public class PrescriptionController {
         this.prescriptionService = prescriptionService;
     }
 
-    @PostMapping("/{patientId}/generate")
-    public ResponseEntity<Prescription> generatePrescription(@PathVariable Long patientId, @RequestBody String diagnosis) {
-        Prescription prescription = prescriptionService.generateAndSavePrescription(patientId, diagnosis);
+    @GetMapping("/{patientId}/generate")
+    public ResponseEntity<String> generatePrescription(@PathVariable Long patientId) {
+        // Fetch description from the database and generate prescription
+        String prescription = prescriptionService.generatePrescription(patientId);
         return ResponseEntity.ok(prescription);
     }
 

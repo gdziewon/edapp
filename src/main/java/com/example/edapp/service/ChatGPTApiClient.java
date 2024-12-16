@@ -6,9 +6,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -23,20 +25,32 @@ public class ChatGPTApiClient {
     }
 
     public String generateResponse(String prompt) {
-        String url = "https://api.openai.com/v1/completions";
+        if (apiKey == null || apiKey.isEmpty()) {
+            throw new IllegalStateException("ChatGPT API key is missing. Please configure it in application.properties.");
+        }
+
+        String url = "https://api.openai.com/v1/chat/completions";
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + apiKey);
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, Object> body = new HashMap<>();
-        body.put("model", "text-davinci-003");
-        body.put("prompt", prompt);
+        body.put("model", "gpt-4o-mini");
+        body.put("messages", List.of(Map.of("role", "user", "content", prompt)));
+        body.put("temperature", 0.7);
         body.put("max_tokens", 150);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-        return response.getBody();
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            return response.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("Failed to fetch response from ChatGPT API: " + e.getResponseBodyAsString(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch response from ChatGPT API: " + e.getMessage(), e);
+        }
     }
 }
+
 
 

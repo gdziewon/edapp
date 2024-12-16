@@ -39,15 +39,17 @@ public class PrescriptionService {
         return createPrescription(patientId, prescriptionText);
     }
 
-    public String generatePrescription(Long patientId, String diagnosis) {
+    public String generatePrescription(Long patientId) {
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new RuntimeException("Patient not found with ID: " + patientId));
 
+        // Use patient data and description to generate the prompt
         String prompt = "Generate a prescription for a patient with the following details:\n"
                 + "Name: " + patient.getName() + "\n"
                 + "Age: " + patient.getAge() + "\n"
-                + "Diagnosis: " + diagnosis;
+                + "Condition Description: " + patient.getConditionDescription();
 
+        // Call ChatGPT API with the prompt
         return chatGPTApiClient.generateResponse(prompt);
     }
 }
